@@ -1,0 +1,772 @@
+/* =============================================================================
+   PPS — Product Parallax Showcase  (pps.css)
+   Premium D2C product section for Shopify Dawn theme.
+   All animations use transform + opacity only → GPU-composited, 60fps safe.
+   ============================================================================= */
+
+/* ── CSS Custom Properties (controlled via section schema) ── */
+.pps-section {
+  --pps-accent:        #111111;
+  --pps-text:          #1a1a1a;
+  --pps-text-muted:    #6b6b6b;
+  --pps-border:        rgba(0, 0, 0, 0.08);
+  --pps-white:         #ffffff;
+  --pps-bg:            #ffffff;
+  --pps-card-bg:       #f8f8f8;
+  --pps-radius:        16px;
+  --pps-radius-lg:     24px;
+  --pps-shadow-sm:     0 2px 12px rgba(0,0,0,0.06);
+  --pps-shadow-md:     0 8px 32px rgba(0,0,0,0.10);
+  --pps-shadow-lg:     0 24px 64px rgba(0,0,0,0.14);
+  --pps-speed:         400ms;          /* --animation-speed from schema */
+  --pps-parallax:      8;             /* --parallax_intensity from schema */
+  --pps-gap:           6rem;
+  font-family: var(--font-body-family, system-ui, sans-serif);
+  color: var(--pps-text);
+  background: var(--pps-bg);
+  overflow: hidden;
+}
+
+/* ── Scroll-reveal base state ── */
+.pps-reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity var(--pps-speed) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--pps-speed) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pps-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.pps-reveal--delay-1 { transition-delay: 80ms; }
+.pps-reveal--delay-2 { transition-delay: 160ms; }
+.pps-reveal--delay-3 { transition-delay: 240ms; }
+.pps-reveal--delay-4 { transition-delay: 320ms; }
+.pps-reveal--scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity var(--pps-speed) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--pps-speed) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pps-reveal--scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Shared layout helpers ── */
+.pps-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.pps-label {
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pps-text-muted);
+  margin-bottom: 1.2rem;
+}
+.pps-heading {
+  font-family: var(--font-heading-family, system-ui, sans-serif);
+  font-size: clamp(2.8rem, 5vw, 5.6rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--pps-accent);
+  margin: 0 0 1.6rem;
+}
+.pps-heading--md {
+  font-size: clamp(2rem, 3.5vw, 3.6rem);
+}
+.pps-body {
+  font-size: clamp(1.5rem, 1.8vw, 1.8rem);
+  line-height: 1.7;
+  color: var(--pps-text-muted);
+  max-width: 60ch;
+}
+.pps-divider {
+  width: 48px;
+  height: 3px;
+  background: var(--pps-accent);
+  border-radius: 99px;
+  margin: 0 0 2.4rem;
+  opacity: 0.18;
+}
+
+/* =============================================================================
+   1. CINEMATIC HERO
+   ============================================================================= */
+.pps-hero {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--pps-bg);
+}
+
+/* Parallax image container */
+.pps-hero__parallax {
+  position: absolute;
+  inset: -15%;           /* oversized so parallax movement doesn't show edges */
+  will-change: transform;
+}
+.pps-hero__parallax-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Gradient veil so text is always legible */
+.pps-hero__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.82) 0%,
+    rgba(255,255,255,0.58) 50%,
+    rgba(255,255,255,0.10) 100%
+  );
+  pointer-events: none;
+}
+
+/* Floating product image */
+.pps-hero__float-wrap {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44%;
+  max-width: 560px;
+  will-change: transform;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,0.18));
+}
+.pps-hero__float-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Content side */
+.pps-hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  padding: 8rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.pps-hero__tagline {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pps-text-muted);
+  margin-bottom: 1.2rem;
+}
+.pps-hero__title {
+  font-family: var(--font-heading-family, system-ui, sans-serif);
+  font-size: clamp(3.6rem, 7vw, 8rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--pps-accent);
+  margin: 0 0 2rem;
+  max-width: 10ch;
+}
+.pps-hero__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  margin-bottom: 3.2rem;
+}
+.pps-hero__price {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--pps-accent);
+}
+.pps-hero__compare {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--pps-text-muted);
+  text-decoration: line-through;
+}
+.pps-hero__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2.8rem;
+}
+.pps-hero__stars {
+  display: flex;
+  gap: 2px;
+  color: #f5a623;
+  font-size: 1.6rem;
+}
+.pps-hero__rating-text {
+  font-size: 1.3rem;
+  color: var(--pps-text-muted);
+}
+.pps-hero__cta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.8rem;
+}
+.pps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.4rem 3.2rem;
+  border-radius: 99px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition:
+    background var(--pps-speed) ease,
+    color var(--pps-speed) ease,
+    border-color var(--pps-speed) ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow var(--pps-speed) ease;
+}
+.pps-btn:active { transform: scale(0.97); }
+.pps-btn--primary {
+  background: var(--pps-accent);
+  color: var(--pps-white);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+}
+.pps-btn--primary:hover {
+  background: #333;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.22);
+  transform: translateY(-2px) scale(1.02);
+}
+.pps-btn--outline {
+  background: transparent;
+  color: var(--pps-accent);
+  border-color: rgba(0,0,0,0.18);
+}
+.pps-btn--outline:hover {
+  border-color: var(--pps-accent);
+  transform: translateY(-2px);
+}
+.pps-hero__badges {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+}
+.pps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--pps-text-muted);
+}
+.pps-badge::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 50%;
+  font-size: 1rem;
+  color: var(--pps-accent);
+}
+
+/* =============================================================================
+   2. PRODUCT STORY
+   ============================================================================= */
+.pps-story {
+  padding: var(--pps-gap) 0;
+  overflow: hidden;
+}
+.pps-story__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+.pps-story__media {
+  position: relative;
+  border-radius: var(--pps-radius-lg);
+  overflow: hidden;
+  background: var(--pps-card-bg);
+  aspect-ratio: 4 / 5;
+}
+.pps-story__parallax-img {
+  position: absolute;
+  inset: -12%;
+  width: calc(100% + 24%);
+  height: calc(100% + 24%);
+  object-fit: cover;
+  will-change: transform;
+  display: block;
+}
+.pps-story__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 60% at 50% 80%,
+    rgba(0,0,0,0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.pps-story__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* =============================================================================
+   3. FEATURE SHOWCASE
+   ============================================================================= */
+.pps-features {
+  padding: var(--pps-gap) 0;
+  background: var(--pps-bg);
+}
+.pps-features__header {
+  text-align: center;
+  margin-bottom: 5.6rem;
+}
+.pps-features__header .pps-divider {
+  margin: 0 auto 2.4rem;
+}
+.pps-features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.4rem;
+}
+.pps-feature-card {
+  background: var(--pps-card-bg);
+  border: 1px solid var(--pps-border);
+  border-radius: var(--pps-radius-lg);
+  padding: 3.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  cursor: default;
+}
+.pps-feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--pps-shadow-md);
+}
+.pps-feature-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.pps-feature-card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pps-feature-card__icon--placeholder {
+  font-size: 2rem;
+}
+.pps-feature-card__visual {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--pps-radius);
+  overflow: hidden;
+  background: var(--pps-white);
+  box-shadow: var(--pps-shadow-sm);
+}
+.pps-feature-card__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pps-feature-card:hover .pps-feature-card__visual img {
+  transform: scale(1.04);
+}
+.pps-feature-card__title {
+  font-family: var(--font-heading-family, system-ui);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--pps-accent);
+  margin: 0;
+}
+.pps-feature-card__desc {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: var(--pps-text-muted);
+  margin: 0;
+}
+
+/* =============================================================================
+   4. GALLERY
+   ============================================================================= */
+.pps-gallery {
+  padding: var(--pps-gap) 0;
+}
+.pps-gallery__main {
+  position: relative;
+  border-radius: var(--pps-radius-lg);
+  overflow: hidden;
+  background: var(--pps-card-bg);
+  aspect-ratio: 16 / 9;
+  margin-bottom: 1.6rem;
+  cursor: zoom-in;
+}
+.pps-gallery__main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.pps-gallery__main-img.is-fading {
+  opacity: 0;
+  transform: scale(0.98);
+}
+.pps-gallery__thumbs {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 0.4rem;
+}
+.pps-gallery__thumbs::-webkit-scrollbar { display: none; }
+.pps-gallery__thumb {
+  flex: 0 0 auto;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  scroll-snap-align: start;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--pps-card-bg);
+}
+.pps-gallery__thumb:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pps-shadow-sm);
+}
+.pps-gallery__thumb.is-active {
+  border-color: var(--pps-accent);
+  box-shadow: var(--pps-shadow-sm);
+}
+.pps-gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Lightbox */
+.pps-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.pps-lightbox.is-open {
+  display: flex;
+}
+.pps-lightbox__img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--pps-radius);
+  box-shadow: var(--pps-shadow-lg);
+}
+.pps-lightbox__close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.pps-lightbox__close:hover { background: rgba(255,255,255,0.22); }
+
+/* =============================================================================
+   5. TECH SPECS
+   ============================================================================= */
+.pps-specs {
+  padding: var(--pps-gap) 0;
+  background: var(--pps-card-bg);
+}
+.pps-specs__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.5rem;
+}
+.pps-specs__table tbody tr {
+  border-bottom: 1px solid var(--pps-border);
+  transition: background 0.2s ease;
+}
+.pps-specs__table tbody tr:last-child { border-bottom: none; }
+.pps-specs__table tbody tr:hover { background: rgba(0,0,0,0.02); }
+.pps-specs__table td {
+  padding: 1.6rem 1.2rem;
+  vertical-align: top;
+}
+.pps-specs__table td:first-child {
+  font-weight: 600;
+  color: var(--pps-accent);
+  width: 36%;
+}
+.pps-specs__table td:last-child {
+  color: var(--pps-text-muted);
+}
+
+/* =============================================================================
+   6. REVIEWS
+   ============================================================================= */
+.pps-reviews {
+  padding: var(--pps-gap) 0;
+}
+.pps-reviews__summary {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 4rem;
+  padding: 3.2rem;
+  background: var(--pps-card-bg);
+  border-radius: var(--pps-radius-lg);
+  border: 1px solid var(--pps-border);
+}
+.pps-reviews__score {
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--pps-accent);
+}
+.pps-reviews__summary-stars {
+  color: #f5a623;
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+}
+.pps-reviews__summary-text {
+  font-size: 1.3rem;
+  color: var(--pps-text-muted);
+  margin-top: 0.4rem;
+}
+.pps-reviews__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.pps-review-card {
+  background: var(--pps-card-bg);
+  border: 1px solid var(--pps-border);
+  border-radius: var(--pps-radius-lg);
+  padding: 2.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+.pps-review-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.pps-review-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.08);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--pps-text-muted);
+}
+.pps-review-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pps-review-card__author {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--pps-accent);
+}
+.pps-review-card__stars {
+  color: #f5a623;
+  font-size: 1.3rem;
+  margin-top: 2px;
+}
+.pps-review-card__body {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: var(--pps-text-muted);
+  font-style: italic;
+}
+
+/* =============================================================================
+   7. FAQ ACCORDION
+   ============================================================================= */
+.pps-faq {
+  padding: var(--pps-gap) 0;
+  background: var(--pps-bg);
+}
+.pps-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.pps-faq__item {
+  background: var(--pps-card-bg);
+  border: 1px solid var(--pps-border);
+  border-radius: var(--pps-radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+.pps-faq__item.is-open {
+  box-shadow: var(--pps-shadow-sm);
+}
+.pps-faq__question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding: 2rem 2.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body-family, system-ui);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--pps-accent);
+  transition: color 0.2s ease;
+}
+.pps-faq__question:hover { color: #555; }
+.pps-faq__icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
+}
+.pps-faq__item.is-open .pps-faq__icon {
+  transform: rotate(45deg);
+  background: var(--pps-accent);
+  color: var(--pps-white);
+}
+.pps-faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pps-faq__item.is-open .pps-faq__answer {
+  max-height: 500px;
+}
+.pps-faq__answer-inner {
+  padding: 0 2.4rem 2rem;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  color: var(--pps-text-muted);
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+/* Tablet */
+@media screen and (max-width: 989px) {
+  .pps-hero__float-wrap {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 80%;
+    max-width: 400px;
+    margin: 3rem auto 0;
+  }
+  .pps-hero {
+    flex-direction: column;
+    padding-top: 4rem;
+  }
+  .pps-story__inner {
+    grid-template-columns: 1fr;
+    gap: 3.6rem;
+  }
+  .pps-features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pps-reviews__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 749px) {
+  :root { --pps-gap: 4rem; }
+  .pps-hero { min-height: 80vh; }
+  .pps-hero__title { font-size: clamp(3.2rem, 9vw, 4.8rem); }
+  .pps-hero__float-wrap { width: 90%; }
+  .pps-features__grid { grid-template-columns: 1fr; }
+  .pps-reviews__summary { flex-direction: column; text-align: center; }
+  .pps-reviews__grid { grid-template-columns: 1fr; }
+  .pps-hero__cta-row { flex-direction: column; align-items: flex-start; }
+  .pps-gallery__thumb { width: 64px; height: 64px; }
+  .pps-specs__table td:first-child { width: 44%; }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pps-reveal,
+  .pps-reveal--scale,
+  .pps-hero__parallax,
+  .pps-story__parallax-img {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

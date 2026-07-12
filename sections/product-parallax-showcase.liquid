@@ -1,0 +1,818 @@
+{{ 'pps.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign show_hero     = section.settings.show_hero
+  assign show_story    = section.settings.show_story
+  assign show_features = section.settings.show_features
+  assign show_gallery  = section.settings.show_gallery
+  assign show_specs    = section.settings.show_specs
+  assign show_reviews  = section.settings.show_reviews
+  assign show_faq      = section.settings.show_faq
+
+  assign hero_image    = section.settings.hero_image | default: product.featured_image
+  assign story_image   = section.settings.story_image | default: product.images[1]
+
+  assign feature_blocks  = section.blocks | where: 'type', 'feature'
+  assign spec_blocks     = section.blocks | where: 'type', 'spec'
+  assign review_blocks   = section.blocks | where: 'type', 'review'
+  assign faq_blocks      = section.blocks | where: 'type', 'faq'
+
+  assign avg_rating = 0
+  for rb in review_blocks
+    assign avg_rating = avg_rating | plus: rb.settings.rating
+  endfor
+  if review_blocks.size > 0
+    assign avg_rating = avg_rating | divided_by: review_blocks.size | round: 1
+  endif
+-%}
+
+<div
+  class="pps-section"
+  data-pps-intensity="{{ section.settings.parallax_intensity }}"
+  style="
+    --pps-speed: {{ section.settings.animation_speed }}ms;
+    --pps-parallax: {{ section.settings.parallax_intensity }};
+    background-color: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.section_spacing_top }}px;
+    padding-bottom: {{ section.settings.section_spacing_bottom }}px;
+  "
+>
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    1. CINEMATIC HERO
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_hero -%}
+  <section class="pps-hero" aria-label="{{ product.title | escape }} hero">
+
+    {%- if hero_image -%}
+    <div class="pps-hero__parallax" aria-hidden="true">
+      <img
+        class="pps-hero__parallax-img"
+        src="{{ hero_image | image_url: width: 1600 }}"
+        srcset="
+          {{ hero_image | image_url: width: 800 }} 800w,
+          {{ hero_image | image_url: width: 1200 }} 1200w,
+          {{ hero_image | image_url: width: 1600 }} 1600w"
+        sizes="100vw"
+        alt="{{ hero_image.alt | default: product.title | escape }}"
+        loading="eager"
+        fetchpriority="high"
+        width="{{ hero_image.width }}"
+        height="{{ hero_image.height }}"
+      >
+    </div>
+    {%- endif -%}
+
+    <div class="pps-hero__veil" aria-hidden="true"></div>
+
+    {%- if hero_image -%}
+    <div class="pps-hero__float-wrap" aria-hidden="true">
+      <img
+        class="pps-hero__float-img pps-reveal--scale"
+        src="{{ hero_image | image_url: width: 900 }}"
+        alt="{{ hero_image.alt | default: product.title | escape }}"
+        loading="eager"
+        width="{{ hero_image.width }}"
+        height="{{ hero_image.height }}"
+      >
+    </div>
+    {%- endif -%}
+
+    <div class="pps-hero__content">
+      {%- if section.settings.hero_tagline != blank -%}
+        <p class="pps-hero__tagline pps-reveal">{{ section.settings.hero_tagline | escape }}</p>
+      {%- endif -%}
+
+      <h2 class="pps-hero__title pps-reveal pps-reveal--delay-1">
+        {{ product.title | escape }}
+      </h2>
+
+      <div class="pps-hero__price-row pps-reveal pps-reveal--delay-2">
+        <span class="pps-hero__price">{{ product.price | money }}</span>
+        {%- if product.compare_at_price > product.price -%}
+          <span class="pps-hero__compare">{{ product.compare_at_price | money }}</span>
+        {%- endif -%}
+      </div>
+
+      <div class="pps-hero__rating pps-reveal pps-reveal--delay-2" aria-label="{{ avg_rating }} out of 5 stars">
+        <div class="pps-hero__stars" aria-hidden="true">
+          {%- for i in (1..5) -%}
+            {%- if i <= avg_rating -%}★{%- else -%}☆{%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if review_blocks.size > 0 -%}
+          <span class="pps-hero__rating-text">{{ avg_rating }}/5 · {{ review_blocks.size }} reviews</span>
+        {%- else -%}
+          <span class="pps-hero__rating-text">{{ section.settings.rating_placeholder }}</span>
+        {%- endif -%}
+      </div>
+
+      <div class="pps-hero__cta-row pps-reveal pps-reveal--delay-3">
+        {%- if section.settings.show_cta_primary -%}
+          <a
+            href="{{ product.url }}"
+            class="pps-btn pps-btn--primary"
+            aria-label="{{ section.settings.cta_primary_text | escape }} - {{ product.title | escape }}"
+          >
+            {{ section.settings.cta_primary_text | escape }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.show_cta_secondary -%}
+          <a
+            href="#pps-story"
+            class="pps-btn pps-btn--outline"
+            aria-label="{{ section.settings.cta_secondary_text | escape }}"
+          >
+            {{ section.settings.cta_secondary_text | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      <div class="pps-hero__badges pps-reveal pps-reveal--delay-4">
+        {%- if section.settings.badge_1 != blank -%}
+          <span class="pps-badge">{{ section.settings.badge_1 | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.badge_2 != blank -%}
+          <span class="pps-badge">{{ section.settings.badge_2 | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.badge_3 != blank -%}
+          <span class="pps-badge">{{ section.settings.badge_3 | escape }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    2. PRODUCT STORY
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_story -%}
+  <section id="pps-story" class="pps-story" aria-label="Product story">
+    <div class="pps-container">
+      <div class="pps-story__inner">
+
+        <div class="pps-story__media pps-reveal--scale">
+          {%- if story_image -%}
+            <img
+              class="pps-story__parallax-img"
+              src="{{ story_image | image_url: width: 900 }}"
+              srcset="
+                {{ story_image | image_url: width: 600 }} 600w,
+                {{ story_image | image_url: width: 900 }} 900w"
+              sizes="(max-width: 749px) 100vw, 50vw"
+              alt="{{ story_image.alt | default: product.title | escape }}"
+              loading="lazy"
+              width="{{ story_image.width }}"
+              height="{{ story_image.height }}"
+            >
+          {%- else -%}
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:4rem;">📦</div>
+          {%- endif -%}
+          <div class="pps-story__glow" aria-hidden="true"></div>
+        </div>
+
+        <div class="pps-story__text">
+          <span class="pps-label pps-reveal">The Story</span>
+          {%- if section.settings.story_heading != blank -%}
+            <h2 class="pps-heading pps-reveal pps-reveal--delay-1">{{ section.settings.story_heading }}</h2>
+          {%- endif -%}
+          <div class="pps-divider pps-reveal pps-reveal--delay-1"></div>
+          {%- if section.settings.story_text != blank -%}
+            <div class="pps-body pps-reveal pps-reveal--delay-2">{{ section.settings.story_text }}</div>
+          {%- else -%}
+            <div class="pps-body pps-reveal pps-reveal--delay-2">{{ product.description }}</div>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    3. FEATURE SHOWCASE
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_features and feature_blocks.size > 0 -%}
+  <section class="pps-features" aria-label="Product features">
+    <div class="pps-container">
+      <div class="pps-features__header">
+        <span class="pps-label pps-reveal">Why {{ product.title | truncatewords: 3 | escape }}</span>
+        <h2 class="pps-heading pps-heading--md pps-reveal pps-reveal--delay-1">Built to be different</h2>
+        <div class="pps-divider pps-reveal pps-reveal--delay-1"></div>
+      </div>
+      <div class="pps-features__grid">
+        {%- for block in feature_blocks -%}
+          {%- assign delay_class = 'pps-reveal--delay-' | append: forloop.index -%}
+          <article
+            class="pps-feature-card pps-reveal {{ delay_class }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="pps-feature-card__icon" aria-hidden="true">
+              {%- if block.settings.icon_image -%}
+                <img
+                  src="{{ block.settings.icon_image | image_url: width: 96 }}"
+                  alt="{{ block.settings.title | escape }} icon"
+                  loading="lazy"
+                  width="48"
+                  height="48"
+                >
+              {%- else -%}
+                <span class="pps-feature-card__icon--placeholder">✦</span>
+              {%- endif -%}
+            </div>
+
+            <h3 class="pps-feature-card__title">{{ block.settings.title | escape }}</h3>
+            <p class="pps-feature-card__desc">{{ block.settings.description | escape }}</p>
+
+            {%- if block.settings.visual_image -%}
+              <div class="pps-feature-card__visual">
+                <img
+                  src="{{ block.settings.visual_image | image_url: width: 600 }}"
+                  alt="{{ block.settings.title | escape }} visual"
+                  loading="lazy"
+                  width="{{ block.settings.visual_image.width }}"
+                  height="{{ block.settings.visual_image.height }}"
+                >
+              </div>
+            {%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    4. PRODUCT GALLERY
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_gallery and product.images.size > 0 -%}
+  <section class="pps-gallery pps-reveal" aria-label="{{ product.title | escape }} gallery">
+    <div class="pps-container">
+      <span class="pps-label pps-reveal">Gallery</span>
+      <div class="pps-gallery__main" role="button" aria-label="Enlarge image" tabindex="0">
+        <img
+          class="pps-gallery__main-img"
+          src="{{ product.images.first | image_url: width: 1200 }}"
+          alt="{{ product.images.first.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="{{ product.images.first.width }}"
+          height="{{ product.images.first.height }}"
+        >
+      </div>
+
+      {%- if product.images.size > 1 -%}
+      <div class="pps-gallery__thumbs" role="list" aria-label="Product image thumbnails">
+        {%- for image in product.images -%}
+          <div
+            class="pps-gallery__thumb"
+            data-full="{{ image | image_url: width: 1200 }}"
+            role="listitem"
+            aria-label="View image {{ forloop.index }}"
+          >
+            <img
+              src="{{ image | image_url: width: 160 }}"
+              alt="{{ image.alt | default: product.title | escape }}"
+              loading="lazy"
+              width="80"
+              height="80"
+            >
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {# Lightbox (rendered once outside container) #}
+  <div class="pps-lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox">
+    <button class="pps-lightbox__close" aria-label="Close lightbox">✕</button>
+    <img class="pps-lightbox__img" src="" alt="{{ product.title | escape }}">
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    5. TECH SPECS
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_specs and spec_blocks.size > 0 -%}
+  <section class="pps-specs" aria-label="Technical specifications">
+    <div class="pps-container">
+      <span class="pps-label pps-reveal">Specifications</span>
+      <h2 class="pps-heading pps-heading--md pps-reveal pps-reveal--delay-1">The details</h2>
+      <div class="pps-divider pps-reveal pps-reveal--delay-1"></div>
+      <table class="pps-specs__table pps-reveal pps-reveal--delay-2" aria-label="{{ product.title | escape }} specifications">
+        <tbody>
+          {%- for block in spec_blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <td>{{ block.settings.label | escape }}</td>
+              <td>{{ block.settings.value }}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    6. REVIEWS / SOCIAL PROOF
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_reviews and review_blocks.size > 0 -%}
+  <section class="pps-reviews" aria-label="Customer reviews">
+    <div class="pps-container">
+      <span class="pps-label pps-reveal">Reviews</span>
+      <h2 class="pps-heading pps-heading--md pps-reveal pps-reveal--delay-1">What customers say</h2>
+      <div class="pps-divider pps-reveal pps-reveal--delay-1"></div>
+
+      <div class="pps-reviews__summary pps-reveal pps-reveal--delay-2">
+        <div class="pps-reviews__score" aria-label="{{ avg_rating }} average rating">{{ avg_rating }}</div>
+        <div>
+          <div class="pps-reviews__summary-stars" aria-hidden="true">
+            {%- for i in (1..5) -%}★{%- endfor -%}
+          </div>
+          <div class="pps-reviews__summary-text">Based on {{ review_blocks.size }} reviews</div>
+        </div>
+      </div>
+
+      <div class="pps-reviews__grid" role="list">
+        {%- for block in review_blocks -%}
+          {%- assign delay_class = 'pps-reveal--delay-' | append: forloop.index -%}
+          <article
+            class="pps-review-card pps-reveal {{ delay_class }}"
+            role="listitem"
+            {{ block.shopify_attributes }}
+          >
+            <div class="pps-review-card__header">
+              <div class="pps-review-card__avatar" aria-hidden="true">
+                {%- if block.settings.avatar_image -%}
+                  <img
+                    src="{{ block.settings.avatar_image | image_url: width: 88 }}"
+                    alt="{{ block.settings.author | escape }}"
+                    loading="lazy"
+                    width="44"
+                    height="44"
+                  >
+                {%- else -%}
+                  👤
+                {%- endif -%}
+              </div>
+              <div>
+                <div class="pps-review-card__author">{{ block.settings.author | escape }}</div>
+                <div class="pps-review-card__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                  {%- for i in (1..5) -%}
+                    {%- if i <= block.settings.rating -%}★{%- else -%}☆{%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            <blockquote class="pps-review-card__body">"{{ block.settings.body | escape }}"</blockquote>
+          </article>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══════════════════════════════════════════════════════
+    7. FAQ ACCORDION
+  ══════════════════════════════════════════════════════ {%- endcomment -%}
+  {%- if show_faq and faq_blocks.size > 0 -%}
+  <section class="pps-faq" aria-label="Frequently asked questions">
+    <div class="pps-container">
+      <div style="text-align:center; margin-bottom:4rem;">
+        <span class="pps-label pps-reveal">FAQ</span>
+        <h2 class="pps-heading pps-heading--md pps-reveal pps-reveal--delay-1">Common questions</h2>
+        <div class="pps-divider pps-reveal pps-reveal--delay-1" style="margin-left:auto;margin-right:auto;"></div>
+      </div>
+      <div class="pps-faq__list" role="list">
+        {%- for block in faq_blocks -%}
+          <div class="pps-faq__item pps-reveal" role="listitem" {{ block.shopify_attributes }}>
+            <button
+              class="pps-faq__question"
+              aria-expanded="false"
+              aria-controls="pps-faq-answer-{{ block.id }}"
+              id="pps-faq-btn-{{ block.id }}"
+            >
+              {{ block.settings.question | escape }}
+              <span class="pps-faq__icon" aria-hidden="true">+</span>
+            </button>
+            <div
+              class="pps-faq__answer"
+              id="pps-faq-answer-{{ block.id }}"
+              role="region"
+              aria-labelledby="pps-faq-btn-{{ block.id }}"
+            >
+              <div class="pps-faq__answer-inner">{{ block.settings.answer }}</div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+</div>
+
+<script src="{{ 'pps.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Parallax Showcase",
+  "tag": "div",
+  "class": "pps-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "Show Hero Section",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_story",
+      "label": "Show Product Story",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Show Feature Showcase",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gallery",
+      "label": "Show Product Gallery",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_specs",
+      "label": "Show Tech Specs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show Reviews",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_faq",
+      "label": "Show FAQ",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Background Image",
+      "info": "Defaults to product featured image if blank."
+    },
+    {
+      "type": "text",
+      "id": "hero_tagline",
+      "label": "Hero Tagline",
+      "default": "Introducing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_primary",
+      "label": "Show Primary CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_text",
+      "label": "Primary CTA Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_secondary",
+      "label": "Show Secondary CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Secondary CTA Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "text",
+      "id": "badge_1",
+      "label": "Trust Badge 1",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "text",
+      "id": "badge_2",
+      "label": "Trust Badge 2",
+      "default": "30-Day Returns"
+    },
+    {
+      "type": "text",
+      "id": "badge_3",
+      "label": "Trust Badge 3",
+      "default": "2-Year Warranty"
+    },
+    {
+      "type": "text",
+      "id": "rating_placeholder",
+      "label": "Rating Placeholder Text",
+      "default": "4.9 · 200+ reviews",
+      "info": "Shown when no review blocks are added."
+    },
+    {
+      "type": "header",
+      "content": "Product Story"
+    },
+    {
+      "type": "image_picker",
+      "id": "story_image",
+      "label": "Story Image",
+      "info": "Defaults to product's second image if blank."
+    },
+    {
+      "type": "text",
+      "id": "story_heading",
+      "label": "Story Heading",
+      "default": "Crafted for those who demand more."
+    },
+    {
+      "type": "richtext",
+      "id": "story_text",
+      "label": "Story Text",
+      "info": "Defaults to product description if blank."
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "parallax_intensity",
+      "label": "Parallax Intensity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "info": "0 = off. Higher = stronger parallax movement."
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Animation Speed (ms)",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_spacing_top",
+      "label": "Padding Top (px)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_spacing_bottom",
+      "label": "Padding Bottom (px)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon Image",
+          "info": "Recommended: 96×96px PNG with transparent background."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Feature Title",
+          "default": "Ultra Strong"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Feature Description",
+          "default": "Built with aerospace-grade materials for durability that lasts a lifetime."
+        },
+        {
+          "type": "image_picker",
+          "id": "visual_image",
+          "label": "Feature Visual Image",
+          "info": "16:9 ratio works best."
+        }
+      ]
+    },
+    {
+      "type": "spec",
+      "name": "Specification Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Specification Label",
+          "default": "Material"
+        },
+        {
+          "type": "richtext",
+          "id": "value",
+          "label": "Specification Value",
+          "default": "<p>Premium aluminium alloy</p>"
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Customer Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar_image",
+          "label": "Customer Avatar"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Customer Name",
+          "default": "Priya S."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Review Text",
+          "default": "Absolutely love it. The quality is exceptional and it arrived faster than expected."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What materials are used?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>We use only premium, ethically sourced materials that meet international quality standards.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Parallax Showcase",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Ultra Strong",
+            "description": "Built with aerospace-grade materials for durability that lasts a lifetime."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "360° Rotation",
+            "description": "Engineered for fluid movement in every direction without resistance."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Works Anywhere",
+            "description": "Rated IP68. Rain, dust, or extreme heat — this product keeps up with you."
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Material",
+            "value": "<p>Aerospace-grade aluminium alloy</p>"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Dimensions",
+            "value": "<p>120 × 60 × 8 mm</p>"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Weight",
+            "value": "<p>180g</p>"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Compatibility",
+            "value": "<p>Universal — works with all standard mounts</p>"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Warranty",
+            "value": "<p>2 years manufacturer warranty</p>"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Rahul M.",
+            "rating": 5,
+            "body": "Exceeded my expectations. Premium quality at a fair price."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Priya S.",
+            "rating": 5,
+            "body": "Arrived quickly, packaged beautifully. Feels incredibly premium."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Arjun K.",
+            "rating": 4,
+            "body": "Great product overall. Would definitely recommend to friends."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What materials are used?",
+            "answer": "<p>We use only premium, ethically sourced materials that meet international quality standards.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What is the return policy?",
+            "answer": "<p>We offer a no-questions-asked 30-day return policy. Simply contact our support team to initiate a return.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Standard shipping takes 3–5 business days. Express shipping options are available at checkout.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
