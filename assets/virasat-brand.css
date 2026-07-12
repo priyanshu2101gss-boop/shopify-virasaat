@@ -1,0 +1,976 @@
+/* =============================================================================
+   VIRASAT — Brand Identity Layer
+   Premium Indian Heritage Fashion
+   Version: 1.0
+
+   Load order: base.css → custom-ui.css → virasat-brand.css (this file)
+
+   This file ONLY overrides visual presentation.
+   It never touches Shopify Liquid, schemas, or functionality.
+   Revert: simply delete this file and remove its <link> tag from theme.liquid.
+   ============================================================================= */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   1. PALETTE TOKENS
+   ══════════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Primary brand palette */
+  --vt-charcoal:        #0E0D0B;
+  --vt-charcoal-rgb:    14, 13, 11;
+  --vt-coffee:          #2A1F18;
+  --vt-coffee-rgb:      42, 31, 24;
+  --vt-gold:            #C6A15B;
+  --vt-gold-rgb:        198, 161, 91;
+  --vt-champagne:       #E5C98A;
+  --vt-champagne-rgb:   229, 201, 138;
+  --vt-ivory:           #F5EFE3;
+  --vt-ivory-rgb:       245, 239, 227;
+  --vt-beige:           #B8A58A;
+  --vt-sand:            #D8C7A3;
+
+  /* Derived tokens */
+  --vt-gold-subtle:     rgba(198, 161, 91, 0.12);
+  --vt-gold-border:     rgba(198, 161, 91, 0.28);
+  --vt-dark-overlay:    rgba(14, 13, 11, 0.64);
+  --vt-warm-shadow:     0 4px 24px rgba(42, 31, 24, 0.12);
+  --vt-warm-shadow-md:  0 8px 40px rgba(42, 31, 24, 0.16);
+  --vt-warm-shadow-lg:  0 24px 72px rgba(42, 31, 24, 0.20);
+
+  /* Typography */
+  --vt-font-heading:    'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --vt-font-body:       'Inter', 'Manrope', system-ui, sans-serif;
+
+  /* Motion */
+  --vt-ease:            cubic-bezier(0.22, 1, 0.36, 1);
+  --vt-duration:        380ms;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   2. FONT FAMILY OVERRIDES
+   Pipe into Dawn's CSS custom properties so all theme elements pick them up.
+   ══════════════════════════════════════════════════════════════════════════════ */
+:root {
+  --font-heading-family: var(--vt-font-heading) !important;
+  --font-body-family:    var(--vt-font-body)    !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   3. GLOBAL BODY — Heritage Background
+   Warm ivory base with a soft golden radial glow.
+   Feels like warm studio light on premium fabric.
+   ══════════════════════════════════════════════════════════════════════════════ */
+html,
+body {
+  background-color: var(--vt-ivory) !important;
+  background-image:
+    radial-gradient(
+      ellipse 80% 55% at 50% 0%,
+      rgba(var(--vt-gold-rgb), 0.07) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 15% 100%,
+      rgba(var(--vt-coffee-rgb), 0.05) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 50% 35% at 85% 80%,
+      rgba(var(--vt-gold-rgb), 0.04) 0%,
+      transparent 50%
+    ) !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+
+/* Sections: allow their color-scheme backgrounds through normally.
+   The ivory body background is the visual base for transparent sections. */
+.gradient {
+  background: rgb(var(--color-background));
+  background: var(--gradient-background);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   4. TYPOGRAPHY — Luxury Editorial Style
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Headings: Cormorant Garamond, editorial sizing */
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6,
+.heading {
+  font-family: var(--vt-font-heading) !important;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+}
+
+/* Large editorial headings */
+h1, .h1 {
+  font-size: clamp(3.6rem, 5.5vw, 7.2rem);
+  letter-spacing: -0.01em;
+  font-weight: 300;
+}
+h2, .h2 {
+  font-size: clamp(2.8rem, 4vw, 5rem);
+  letter-spacing: 0.01em;
+}
+h3, .h3 {
+  font-size: clamp(2rem, 2.8vw, 3.2rem);
+}
+
+/* Body: Inter, clean and legible */
+body,
+.body,
+p,
+li,
+td,
+input,
+select,
+textarea,
+button {
+  font-family: var(--vt-font-body) !important;
+}
+
+/* Refined body sizing */
+body {
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  line-height: 1.72;
+}
+@media screen and (min-width: 750px) {
+  body { font-size: 1.6rem; }
+}
+
+/* Label-style uppercase text (used in nav, badges, section labels) */
+.caption,
+.caption-with-letter-spacing,
+.announcement-bar__message,
+.utility-bar-text {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Product card vendor text */
+.card__information .card__vendor {
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vt-beige);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   5. ANNOUNCEMENT BAR — Deep Charcoal with Gold text
+   ══════════════════════════════════════════════════════════════════════════════ */
+.announcement-bar,
+.color-scheme-3.announcement-bar-section,
+[class*="color-scheme"].announcement-bar-section {
+  background: var(--vt-charcoal) !important;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 120px,
+      rgba(198, 161, 91, 0.04) 120px,
+      rgba(198, 161, 91, 0.04) 121px
+    ) !important;
+}
+
+.announcement-bar__message,
+.announcement-bar__message p,
+.announcement-bar__message a {
+  color: var(--vt-champagne) !important;
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.15rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   6. HEADER — Transparent + Scroll-to-Dark + Gold Hover Navigation
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Base header: ivory background */
+.header-wrapper {
+  background: var(--vt-ivory) !important;
+  background-image: none !important;
+  border-bottom: 1px solid var(--vt-gold-border) !important;
+  transition:
+    background var(--vt-duration) var(--vt-ease),
+    box-shadow var(--vt-duration) var(--vt-ease);
+}
+
+/* After scrolling (class added by virasat-brand.js) */
+.header-wrapper.vt-scrolled {
+  background: var(--vt-charcoal) !important;
+  border-bottom-color: rgba(198, 161, 91, 0.15) !important;
+  box-shadow: 0 2px 32px rgba(14, 13, 11, 0.28) !important;
+}
+.header-wrapper.vt-scrolled .header__heading-link,
+.header-wrapper.vt-scrolled .header__heading,
+.header-wrapper.vt-scrolled .header__heading span,
+.header-wrapper.vt-scrolled .list-menu__item--link {
+  color: var(--vt-ivory) !important;
+}
+.header-wrapper.vt-scrolled .header__icon svg,
+.header-wrapper.vt-scrolled .header__icon path,
+.header-wrapper.vt-scrolled .icon {
+  color: var(--vt-ivory) !important;
+  fill: var(--vt-ivory) !important;
+}
+.header-wrapper.vt-scrolled .header__icon:hover {
+  color: var(--vt-champagne) !important;
+}
+
+/* Logo / brand name */
+.header__heading-link,
+.header__heading span.h2 {
+  font-family: var(--vt-font-heading) !important;
+  font-size: 2.8rem !important;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vt-charcoal) !important;
+  transition: color var(--vt-duration) var(--vt-ease);
+}
+
+/* Desktop navigation links */
+.list-menu__item--link {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vt-charcoal) !important;
+  position: relative;
+  padding-bottom: 4px !important;
+  transition: color var(--vt-duration) var(--vt-ease) !important;
+}
+
+/* Gold underline animation on hover */
+.list-menu__item--link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--vt-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.32s var(--vt-ease);
+}
+.list-menu__item--link:hover::after,
+.list-menu__item--link:focus-visible::after {
+  transform: scaleX(1);
+}
+.list-menu__item--link:hover {
+  color: var(--vt-coffee) !important;
+}
+
+/* Header icon buttons (cart, search, account) */
+.header__icon {
+  color: var(--vt-charcoal) !important;
+  transition: color var(--vt-duration) var(--vt-ease) !important;
+}
+.header__icon:hover {
+  color: var(--vt-gold) !important;
+}
+.header__icon svg,
+.header__icon path {
+  transition: fill var(--vt-duration) var(--vt-ease), color var(--vt-duration) var(--vt-ease);
+}
+
+/* Cart bubble count */
+.cart-count-bubble {
+  background: var(--vt-gold) !important;
+  color: var(--vt-charcoal) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   7. MOBILE MENU DRAWER — Dark heritage styling
+   ══════════════════════════════════════════════════════════════════════════════ */
+.menu-drawer {
+  background: var(--vt-charcoal) !important;
+}
+.menu-drawer .header__heading-link span,
+.menu-drawer .list-menu__item--link,
+.menu-drawer__navigation-item a,
+.menu-drawer .h2,
+.menu-drawer__heading {
+  color: var(--vt-ivory) !important;
+  font-family: var(--vt-font-heading) !important;
+}
+.menu-drawer__navigation-item a {
+  border-bottom: 1px solid rgba(198, 161, 91, 0.12) !important;
+  padding: 1.8rem 0 !important;
+  font-size: 2.4rem;
+  letter-spacing: 0.04em;
+}
+.menu-drawer__navigation-item a:hover {
+  color: var(--vt-champagne) !important;
+}
+.menu-drawer .header__icon,
+.menu-drawer .icon {
+  color: var(--vt-ivory) !important;
+}
+.menu-drawer__close-button .icon {
+  color: var(--vt-ivory) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   8. BUTTONS — Antique Gold Primary, Minimal Outline Secondary
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Primary button: gold with charcoal text */
+.button,
+.shopify-challenge__button,
+.customer button {
+  background-color: var(--vt-gold) !important;
+  color: var(--vt-charcoal) !important;
+  border: 1px solid transparent !important;
+  border-radius: 0 !important;
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  padding: 1.4rem 3.6rem !important;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color var(--vt-duration) var(--vt-ease),
+    color var(--vt-duration) var(--vt-ease),
+    box-shadow var(--vt-duration) var(--vt-ease),
+    transform 0.18s var(--vt-ease) !important;
+}
+
+/* Shimmer sweep on hover */
+.button::before,
+.shopify-challenge__button::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; bottom: 0;
+  width: 60%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s var(--vt-ease);
+  z-index: 1;
+}
+.button:hover::before,
+.shopify-challenge__button:hover::before {
+  left: 160%;
+}
+
+.button:hover:not([disabled]),
+.shopify-challenge__button:hover {
+  background-color: var(--vt-champagne) !important;
+  box-shadow: 0 6px 28px rgba(var(--vt-gold-rgb), 0.32) !important;
+  transform: translateY(-1px) !important;
+}
+.button:active:not([disabled]) {
+  transform: translateY(0) !important;
+}
+
+/* Secondary / outline button */
+.button--secondary {
+  background-color: transparent !important;
+  color: var(--vt-charcoal) !important;
+  border: 1px solid var(--vt-gold) !important;
+}
+.button--secondary:hover:not([disabled]) {
+  background-color: var(--vt-gold-subtle) !important;
+  box-shadow: 0 4px 20px rgba(var(--vt-gold-rgb), 0.22) !important;
+}
+
+/* Add to Cart button specifically */
+.product-form__submit {
+  background-color: var(--vt-charcoal) !important;
+  color: var(--vt-champagne) !important;
+  border: 1px solid var(--vt-charcoal) !important;
+  letter-spacing: 0.2em !important;
+}
+.product-form__submit:hover:not([disabled]) {
+  background-color: var(--vt-coffee) !important;
+  border-color: var(--vt-coffee) !important;
+  color: var(--vt-champagne) !important;
+  box-shadow: 0 6px 28px rgba(14, 13, 11, 0.30) !important;
+}
+
+/* Shopify payment buttons */
+.shopify-payment-button__button--unbranded {
+  background-color: var(--vt-gold) !important;
+  color: var(--vt-charcoal) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   9. PRODUCT CARDS — Editorial Fashion Style
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.card-wrapper {
+  transition: transform 0.36s var(--vt-ease);
+}
+.card-wrapper:hover {
+  transform: translateY(-4px);
+}
+
+/* Remove dawn's default card border in standard style */
+.card--standard .card__inner {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Image: subtle scale on hover */
+.card .card__media,
+.card .card__inner .card__media {
+  overflow: hidden;
+}
+.card .card__media img,
+.card .card__inner .card__media img {
+  transition: transform 0.72s var(--vt-ease) !important;
+  will-change: transform;
+}
+.card-wrapper:hover .card__media img,
+.card-wrapper:hover .card__inner .card__media img {
+  transform: scale(1.06) !important;
+}
+
+/* Card information area */
+.card__information {
+  padding: 1.6rem 0 !important;
+}
+
+/* Product title on cards */
+.card__information .card__heading,
+.card__information .card__heading a {
+  font-family: var(--vt-font-heading) !important;
+  font-size: 1.8rem !important;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--vt-charcoal) !important;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: color 0.24s ease;
+}
+.card__information .card__heading a:hover {
+  color: var(--vt-coffee) !important;
+}
+
+/* Price on cards */
+.card__information .price,
+.card__information .price__container {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--vt-coffee) !important;
+  letter-spacing: 0.04em;
+}
+
+/* Gold accent dot / divider between vendor and title */
+.card__information .card__vendor::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--vt-gold);
+  margin: 0.8rem 0;
+  opacity: 0.6;
+}
+
+/* Compare-at price */
+.price__regular .price-item--regular {
+  color: var(--vt-coffee);
+}
+.price__sale .price-item--sale {
+  color: var(--vt-charcoal);
+  font-weight: 600;
+}
+.price__sale .price-item--regular {
+  color: var(--vt-beige);
+  font-size: 1.2rem;
+}
+
+/* Badges: sale and sold-out */
+.badge {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1rem !important;
+  font-weight: 600;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  padding: 0.4rem 1rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   10. PRODUCT PAGE — Luxury Experience
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Product title */
+.product__title,
+.product-section .product__title {
+  font-family: var(--vt-font-heading) !important;
+  font-size: clamp(3rem, 4vw, 4.8rem) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.12 !important;
+  color: var(--vt-charcoal) !important;
+}
+
+/* Vendor name on product page */
+.product__text.caption-with-letter-spacing {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vt-beige) !important;
+}
+
+/* Price on product page */
+.product__price-group .price,
+.product__info-wrapper .price {
+  font-family: var(--vt-font-body) !important;
+  font-size: 2rem !important;
+  color: var(--vt-charcoal) !important;
+  letter-spacing: 0.04em;
+}
+
+/* Variant pill buttons */
+.swatch-input__button,
+.variant-input-wrapper .variant-input {
+  border-radius: 0 !important;
+  border-color: rgba(var(--vt-coffee-rgb), 0.25) !important;
+  color: var(--vt-charcoal) !important;
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.2rem !important;
+  letter-spacing: 0.08em;
+  transition:
+    background var(--vt-duration) var(--vt-ease),
+    border-color var(--vt-duration) var(--vt-ease) !important;
+}
+.swatch-input__button:hover,
+.variant-input-wrapper .variant-input:hover {
+  border-color: var(--vt-gold) !important;
+  color: var(--vt-coffee) !important;
+}
+.swatch-input__button:checked + label,
+.swatch-input--active {
+  border-color: var(--vt-gold) !important;
+  box-shadow: inset 0 0 0 1px var(--vt-gold) !important;
+}
+
+/* Product description */
+.product__description,
+.product__description p,
+.product__description li {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: rgba(var(--vt-coffee-rgb), 0.85) !important;
+}
+
+/* Product divider: thin gold line */
+.product__separator,
+.product-section hr {
+  border: none !important;
+  border-top: 1px solid var(--vt-gold-border) !important;
+  margin: 2rem 0 !important;
+}
+
+/* Quantity selector */
+.quantity__button,
+.quantity__input {
+  border-radius: 0 !important;
+  border-color: rgba(var(--vt-coffee-rgb), 0.25) !important;
+  color: var(--vt-charcoal) !important;
+  font-family: var(--vt-font-body) !important;
+}
+.quantity__button:hover {
+  background: var(--vt-gold-subtle) !important;
+  border-color: var(--vt-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   11. COLLECTION PAGE — Editorial grid
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.collection-hero__title {
+  font-family: var(--vt-font-heading) !important;
+  font-size: clamp(4rem, 6vw, 8rem) !important;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: inherit !important;
+}
+
+.collection-hero__description {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: inherit !important;
+  opacity: 0.8;
+}
+
+/* Collection filter & sort */
+.mobile-facets__main .form__label,
+.facets-vertical .form__label,
+.facets__summary,
+.facets-wrap .form__label {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vt-charcoal) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   12. FORMS & INPUTS
+   ══════════════════════════════════════════════════════════════════════════════ */
+.field__input,
+.select__select,
+.customer .field__input,
+input[type="email"],
+input[type="text"],
+input[type="tel"],
+textarea {
+  border-radius: 0 !important;
+  border-color: rgba(var(--vt-coffee-rgb), 0.22) !important;
+  background: transparent !important;
+  color: var(--vt-charcoal) !important;
+  font-family: var(--vt-font-body) !important;
+  transition: border-color 0.24s ease !important;
+}
+.field__input:focus,
+.select__select:focus,
+input:focus {
+  border-color: var(--vt-gold) !important;
+  box-shadow: 0 0 0 2px rgba(var(--vt-gold-rgb), 0.14) !important;
+  outline: none !important;
+}
+.field__label,
+.form__label {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vt-coffee) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   13. CART DRAWER — Charcoal elegance
+   ══════════════════════════════════════════════════════════════════════════════ */
+.cart-drawer {
+  background: var(--vt-ivory) !important;
+  border-left: 1px solid var(--vt-gold-border) !important;
+}
+.cart-drawer__header {
+  border-bottom: 1px solid var(--vt-gold-border) !important;
+}
+.cart-drawer__heading,
+.cart-drawer__title {
+  font-family: var(--vt-font-heading) !important;
+  font-size: 2.4rem !important;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--vt-charcoal) !important;
+}
+.cart-item__name,
+.cart-item__name a {
+  font-family: var(--vt-font-heading) !important;
+  font-size: 1.8rem !important;
+  font-weight: 400;
+  color: var(--vt-charcoal) !important;
+}
+.cart-item__vendor {
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vt-beige) !important;
+}
+.totals__subtotal {
+  font-family: var(--vt-font-heading) !important;
+  font-size: 2rem !important;
+  color: var(--vt-charcoal) !important;
+}
+.cart-items tr {
+  border-bottom: 1px solid rgba(var(--vt-gold-rgb), 0.12) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   14. SECTION HEADINGS — Consistent across all sections
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Section title (e.g., "Featured Collection", "You May Also Like") */
+.title,
+.collection__title,
+.section-heading,
+.featured-collection__title,
+.title--primary {
+  font-family: var(--vt-font-heading) !important;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: inherit;
+}
+
+/* Gold decorative separator under section headings */
+.title-wrapper::after,
+.section-header::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--vt-gold);
+  margin: 1.6rem auto;
+  opacity: 0.5;
+}
+
+/* Rich text sections */
+.rich-text__heading {
+  font-family: var(--vt-font-heading) !important;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+.rich-text__text {
+  font-family: var(--vt-font-body) !important;
+  line-height: 1.8;
+  opacity: 0.85;
+}
+
+/* Image-with-text */
+.image-with-text__content .title {
+  font-family: var(--vt-font-heading) !important;
+  font-size: clamp(2.8rem, 4vw, 5rem) !important;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   15. FOOTER — Dark Heritage Base
+   ══════════════════════════════════════════════════════════════════════════════ */
+.footer {
+  background: var(--vt-charcoal) !important;
+  background-image:
+    radial-gradient(
+      ellipse 70% 50% at 50% 100%,
+      rgba(var(--vt-coffee-rgb), 0.6) 0%,
+      transparent 70%
+    ) !important;
+  border-top: 1px solid rgba(var(--vt-gold-rgb), 0.14) !important;
+}
+
+/* Footer heading */
+.footer__heading,
+.footer__heading--expandable {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--vt-champagne) !important;
+}
+
+/* Footer links */
+.footer__list a,
+.footer__list li a {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.35rem;
+  color: rgba(var(--vt-beige-rgb, 184, 165, 138), 0.85) !important;
+  text-decoration: none;
+  transition: color 0.24s ease !important;
+}
+.footer__list a:hover {
+  color: var(--vt-champagne) !important;
+}
+
+/* Footer copyright / bottom bar */
+.footer__copyright,
+.copyright__content {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: rgba(var(--vt-beige-rgb, 184, 165, 138), 0.55) !important;
+}
+
+/* Footer dividers */
+.footer hr,
+.footer .footer__list + .footer__list {
+  border-color: rgba(var(--vt-gold-rgb), 0.1) !important;
+}
+
+/* Social icons in footer */
+.footer .list-social__link {
+  color: var(--vt-sand) !important;
+  transition: color 0.24s ease;
+}
+.footer .list-social__link:hover {
+  color: var(--vt-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   16. SCROLL-REVEAL ANIMATIONS (class toggled by virasat-brand.js)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.vt-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.6s var(--vt-ease),
+    transform 0.6s var(--vt-ease);
+}
+.vt-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.vt-reveal--delay-1 { transition-delay: 80ms; }
+.vt-reveal--delay-2 { transition-delay: 160ms; }
+.vt-reveal--delay-3 { transition-delay: 240ms; }
+.vt-reveal--delay-4 { transition-delay: 320ms; }
+
+/* Section entrance: already handled by Dawn's animations_reveal_on_scroll */
+/* We add a class to headings for the extra luxury feel */
+.vt-fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--vt-ease), transform 0.7s var(--vt-ease);
+}
+.vt-fade-up.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   17. MISCELLANEOUS ELEGANCE
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Selection color: gold */
+::selection {
+  background: rgba(var(--vt-gold-rgb), 0.22);
+  color: var(--vt-charcoal);
+}
+
+/* Scrollbar: minimal ivory/gold */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--vt-ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--vt-sand);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vt-gold);
+}
+
+/* Focus rings: gold */
+:focus-visible {
+  outline: 2px solid var(--vt-gold) !important;
+  outline-offset: 3px !important;
+}
+
+/* Global link color */
+a {
+  color: inherit;
+  transition: color 0.22s ease;
+}
+
+/* Breadcrumbs */
+.breadcrumbs__item,
+.breadcrumbs__chevron,
+nav[aria-label="Breadcrumb"] {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: var(--vt-beige) !important;
+}
+
+/* Image overlay: subtle warm darkening on section images for elegance */
+.global-media-settings:not(.background-transparent)::after {
+  content: none; /* don't add overlay to product images */
+}
+
+/* Predictive search */
+.predictive-search {
+  border: 1px solid var(--vt-gold-border) !important;
+  border-radius: 0 !important;
+  background: var(--vt-ivory) !important;
+}
+.predictive-search__heading {
+  font-family: var(--vt-font-body) !important;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vt-beige) !important;
+}
+.predictive-search__item-heading {
+  font-family: var(--vt-font-heading) !important;
+  color: var(--vt-charcoal) !important;
+}
+
+/* Newsletter */
+.newsletter-section .field__input {
+  border-color: rgba(var(--vt-gold-rgb), 0.3) !important;
+}
+.newsletter__subheading {
+  font-family: var(--vt-font-body) !important;
+  opacity: 0.8;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   18. RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media screen and (max-width: 749px) {
+
+  /* Tighter heading on mobile */
+  h1, .h1 { font-size: clamp(3rem, 9vw, 4.4rem); }
+  h2, .h2 { font-size: clamp(2.4rem, 7vw, 3.4rem); }
+
+  /* Product title on mobile */
+  .product__title { font-size: clamp(2.4rem, 7vw, 3.4rem) !important; }
+
+  /* Full-width ATC on mobile */
+  .product-form__submit {
+    width: 100% !important;
+    padding: 1.6rem 2rem !important;
+  }
+
+  /* Footer: slightly smaller on mobile */
+  .footer { padding: 4rem 0 2rem; }
+}
+
+@media screen and (min-width: 990px) {
+  /* Ensure header has breathing room on desktop */
+  .header.page-width {
+    padding-left: 5rem !important;
+    padding-right: 5rem !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   19. ACCESSIBILITY: respect reduced-motion
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .vt-reveal,
+  .vt-fade-up,
+  .button,
+  .card-wrapper,
+  .card .card__media img,
+  .list-menu__item--link::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  .vt-reveal,
+  .vt-fade-up {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

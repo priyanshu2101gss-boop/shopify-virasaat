@@ -578,125 +578,15 @@
 }
 
 /* =============================================================================
-   HOMEPAGE PREMIUM GRID BACKGROUND  (v2 — root-cause fix)
+   HOMEPAGE BACKGROUND — superseded by Virasat Brand Layer
    ─────────────────────────────────────────────────────────────────────────────
-   WHY THE PREVIOUS VERSION DIDN'T SHOW:
-   Every Dawn section carries the `.gradient` class, which applies:
-       background: rgb(var(--color-background));
-       background: var(--gradient-background);
-   That solid fill painted over whatever was set on <main>, making the grid
-   invisible.
+   The futuristic white grid has been replaced by the premium heritage
+   background system in assets/virasat-brand.css.
 
-   THE FIX:
-   1. Put the grid on `body` using `:has(main[data-template="index"])` so it
-      only activates on the homepage.
-   2. Override `.gradient` sections to `background: transparent` on the
-      homepage so the grid underneath shows through.
-   3. Put the depth/vignette on `body::before` (position: fixed) so it always
-      stays viewport-centred regardless of scroll.
+   The warm ivory + radial gold glow is now applied globally to html/body,
+   and color-scheme sections render their proper heritage backgrounds
+   through Dawn's standard .gradient system.
 
-   HOW TO TUNE:
-   ─────────────────────────────────────────────────────────────────────────────
-   --hp-grid-size         Grid cell size in px.  Default: 48px (try 32–80px).
-   --hp-grid-opacity      Line visibility 0–1.   Default: 0.05 (try 0.02–0.09).
-   --hp-grid-color        RGB of lines.          Default: 0,0,0 (black).
-                          For dark backgrounds use 255,255,255.
-   --hp-vignette-spread   Depth gradient reach.  Default: 80% (try 60–100%).
-   --hp-vignette-opacity  3-D illusion strength. Default: 0.06 (try 0.03–0.12).
+   To revert to the white grid: remove virasat-brand.css and restore this
+   section from git: git checkout assets/custom-ui.css
    ============================================================================= */
-
-/* ── 1. Grid lives on <body>, activated only on the homepage ── */
-body:has(main[data-template="index"]) {
-  --hp-grid-size:        48px;
-  --hp-grid-opacity:     0.05;
-  --hp-grid-color:       0, 0, 0;
-  --hp-vignette-spread:  80%;
-  --hp-vignette-opacity: 0.06;
-
-  /* Pure white base */
-  background-color: #ffffff !important;
-
-  /* Two stacked repeating gradients = perfect grid */
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent calc(var(--hp-grid-size) - 1px),
-      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) calc(var(--hp-grid-size) - 1px),
-      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) var(--hp-grid-size)
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent calc(var(--hp-grid-size) - 1px),
-      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) calc(var(--hp-grid-size) - 1px),
-      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) var(--hp-grid-size)
-    ) !important;
-
-  background-size: var(--hp-grid-size) var(--hp-grid-size) !important;
-  background-attachment: fixed !important; /* grid stays put on scroll */
-
-  /* Stacking context for the vignette pseudo-element */
-  position: relative;
-}
-
-/* ── 2. Depth / vignette overlay — gives the soft 3-D perspective feel ── */
-body:has(main[data-template="index"])::before {
-  content: "";
-  position: fixed;      /* always centred in the viewport */
-  inset: 0;
-  pointer-events: none; /* never blocks clicks or hovers */
-  z-index: 0;           /* below all page content */
-
-  background: radial-gradient(
-    ellipse var(--hp-vignette-spread) var(--hp-vignette-spread) at 50% 30%,
-    rgba(255, 255, 255, 0.0)  0%,    /* clear centre */
-    rgba(255, 255, 255, 0.0) 35%,
-    rgba(var(--hp-grid-color), var(--hp-vignette-opacity)) 100% /* soft dark edge */
-  );
-}
-
-/* ── 3. THE KEY FIX: strip the solid fill from every Dawn section ──
-   Dawn's `.gradient` class sets background: rgb(var(--color-background))
-   which covers the grid. We override it to transparent on the homepage only. */
-body:has(main[data-template="index"]) .gradient {
-  background: transparent !important;
-}
-
-/* Some sections use an inline `color-N` class with a background via the
-   Liquid colour scheme system. Strip those too. */
-body:has(main[data-template="index"]) [class*="color-"] {
-  background-color: transparent !important;
-  background-image: none !important;  /* removes any --gradient-background */
-}
-
-/* ── 4. Keep all page content above the body::before vignette ── */
-body:has(main[data-template="index"]) > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ── 5. Responsive tweaks ── */
-@media screen and (max-width: 989px) {
-  body:has(main[data-template="index"]) {
-    --hp-grid-size:    40px;
-    --hp-grid-opacity: 0.045;
-  }
-}
-
-@media screen and (max-width: 749px) {
-  body:has(main[data-template="index"]) {
-    --hp-grid-size:       32px;
-    --hp-grid-opacity:    0.04;
-    --hp-vignette-opacity: 0.04;
-  }
-}
-
-/* ── 6. Accessibility: honour reduced-motion ── */
-@media (prefers-reduced-motion: reduce) {
-  body:has(main[data-template="index"]) {
-    background-attachment: scroll !important;
-  }
-}
-
-
