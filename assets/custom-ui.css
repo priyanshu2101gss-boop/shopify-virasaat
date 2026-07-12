@@ -1,0 +1,578 @@
+/* =============================================================================
+   GRIPZY — Custom UI Layer v1.0
+   Animation-ready styles for GSAP/Three.js integration.
+   Works on top of Dawn's CSS custom property system.
+   Attach GSAP timelines to .js-hero-trigger, .js-card-animate, .js-nav-item
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. CUSTOM NAVIGATION BAR
+   Three-pill category nav beneath the main header.
+   Hook GSAP with: gsap.from('.js-nav-item', { y: -20, opacity: 0, stagger: 0.1 })
+   --------------------------------------------------------------------------- */
+
+.custom-nav-wrapper {
+  width: 100%;
+  background: rgb(var(--color-background));
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.custom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem 3rem;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  list-style: none;
+}
+
+/* Each category pill */
+.custom-nav__item {
+  flex: 0 0 auto;
+}
+
+.custom-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 2.4rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(var(--color-foreground), 0.85);
+  border: 1px solid rgba(var(--color-foreground), 0.15);
+  border-radius: 10rem; /* pill shape */
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+
+/* Shimmer pseudo-element — toggle visibility via JS/GSAP */
+.custom-nav__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(var(--color-foreground), 0.06) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+  pointer-events: none;
+}
+
+.custom-nav__link:hover::before {
+  transform: translateX(100%);
+}
+
+.custom-nav__link:hover {
+  color: rgb(var(--color-foreground));
+  border-color: rgba(var(--color-foreground), 0.5);
+  background: rgba(var(--color-foreground), 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--color-foreground), 0.08);
+}
+
+.custom-nav__link:active {
+  transform: translateY(0);
+}
+
+/* Active state — add this class via JS when on that collection page */
+.custom-nav__link.is-active {
+  color: rgb(var(--color-background));
+  background: rgb(var(--color-foreground));
+  border-color: rgb(var(--color-foreground));
+}
+
+/* Dot accent inside active pill */
+.custom-nav__link.is-active::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  flex-shrink: 0;
+}
+
+/* Mobile: make pills scrollable row */
+@media screen and (max-width: 749px) {
+  .custom-nav {
+    justify-content: flex-start;
+    padding: 0.6rem 1.6rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.6rem;
+  }
+
+  .custom-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-nav__link {
+    padding: 0.6rem 1.8rem;
+    white-space: nowrap;
+    font-size: 1.1rem;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   2. COLLECTION HERO FEATURE SHOWCASE
+   Full-bleed hero for the first product in a collection.
+   GSAP hook: document.querySelector('.js-hero-trigger')
+   Three.js WebGL canvas: mount to .hero-canvas-mount
+   --------------------------------------------------------------------------- */
+
+.collection-hero {
+  position: relative;
+  width: 100%;
+  min-height: 70vh;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end; /* text anchors to bottom */
+  background: rgb(var(--color-background));
+}
+
+/* GSAP trigger wrapper — attach your timeline here */
+.js-hero-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Background image fills the container */
+.collection-hero__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.collection-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transform: scale(1.05); /* starting scale for entrance animation */
+  transition: transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* Slight zoom-out Ken Burns on load */
+.collection-hero.is-visible .collection-hero__media img {
+  transform: scale(1);
+}
+
+/* Gradient scrim for text legibility */
+.collection-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.25) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+
+/* Mount point for Three.js canvas overlay — keep pointer-events: none */
+.hero-canvas-mount {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Content block — overlays on top of image */
+.collection-hero__content {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  padding: 4rem 5vw 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.6rem;
+}
+
+/* Collection name badge */
+.collection-hero__eyebrow {
+  font-family: var(--font-body-family);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0;   /* animate in via GSAP */
+  transform: translateY(10px);
+}
+
+/* Product title — large display text */
+.collection-hero__title {
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: clamp(3.2rem, 7vw, 8rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0;
+  max-width: 18ch;
+  opacity: 0;       /* animate in via GSAP */
+  transform: translateY(20px);
+}
+
+/* Subtitle / vendor */
+.collection-hero__subtitle {
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* CTA row */
+.collection-hero__cta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Primary CTA — inherits Dawn button variables */
+.collection-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.4rem 3.2rem;
+  font-family: var(--font-heading-family);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(var(--color-button-text), 1);
+  background: rgba(var(--color-button), 1);
+  border: none;
+  border-radius: var(--buttons-radius, 4px);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease,
+    opacity 0.3s ease;
+  will-change: transform;
+}
+
+.collection-hero__cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.collection-hero__cta:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.collection-hero__cta:hover::after {
+  opacity: 1;
+}
+
+.collection-hero__cta:active {
+  transform: translateY(-1px) scale(1);
+}
+
+/* Arrow icon inside CTA */
+.collection-hero__cta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s ease;
+}
+
+.collection-hero__cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* Secondary ghost CTA */
+.collection-hero__cta--ghost {
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 1.3rem 2.4rem;
+}
+
+.collection-hero__cta--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* No-image fallback: elegant gradient placeholder */
+.collection-hero--no-image {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 50vh;
+}
+
+/* Hero on page 2+ — hide gracefully */
+.collection-hero--hidden {
+  display: none;
+}
+
+/* Scroll indicator */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 2.4rem;
+  right: 3.2rem;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.hero-scroll-indicator__line {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.3; }
+  50%       { transform: scaleY(0.5); opacity: 0.8; }
+}
+
+/* Mobile hero adjustments */
+@media screen and (max-width: 749px) {
+  .collection-hero {
+    min-height: 55vh;
+    max-height: 75vh;
+    align-items: flex-end;
+  }
+
+  .collection-hero__content {
+    padding: 3rem 2.4rem 4rem;
+    gap: 1.2rem;
+  }
+
+  .collection-hero__title {
+    font-size: clamp(2.8rem, 9vw, 5rem);
+  }
+
+  .collection-hero__cta {
+    padding: 1.2rem 2.4rem;
+    font-size: 1.2rem;
+  }
+
+  .hero-scroll-indicator {
+    display: none;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   3. PRODUCT CATALOG GRID (below the hero)
+   GSAP hook: gsap.from('.js-card-animate', { y: 40, opacity: 0, stagger: 0.07 })
+   --------------------------------------------------------------------------- */
+
+.catalog-section {
+  padding: 6rem 0 4rem;
+}
+
+.catalog-section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 3.2rem;
+  padding: 0 3rem;
+  max-width: var(--page-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.catalog-section__title {
+  font-family: var(--font-heading-family);
+  font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+  font-weight: var(--font-heading-weight);
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+  margin: 0;
+}
+
+.catalog-section__count {
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.5);
+  font-family: var(--font-body-family);
+  letter-spacing: 0.04em;
+}
+
+/* Individual product card wrapper — GSAP target */
+.js-card-animate {
+  will-change: transform, opacity;
+  /* Initial state for GSAP (fallback if no JS) */
+  opacity: 1;
+}
+
+/* Card media image scale on hover */
+.js-card-animate .card__media img,
+.js-card-animate .card-wrapper img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.js-card-animate:hover .card__media img,
+.js-card-animate:hover .card-wrapper img {
+  transform: scale(1.06);
+}
+
+/* Card structural lift on hover */
+.js-card-animate .card,
+.js-card-animate .card-wrapper {
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.35s ease;
+  border-radius: var(--product-card-corner-radius, 8px);
+}
+
+.js-card-animate:hover .card,
+.js-card-animate:hover .card-wrapper {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(var(--color-shadow), 0.12);
+}
+
+/* Price reveal line — thin underline that expands on hover */
+.js-card-animate .price {
+  position: relative;
+  display: inline-block;
+}
+
+.js-card-animate .price::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgb(var(--color-foreground));
+  transition: width 0.4s ease;
+}
+
+.js-card-animate:hover .price::after {
+  width: 100%;
+}
+
+
+/* ---------------------------------------------------------------------------
+   4. SECTION DIVIDER — between hero and catalog
+   Subtle visual separator
+   --------------------------------------------------------------------------- */
+
+.hero-catalog-divider {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 3rem;
+  max-width: var(--page-width);
+  margin: 0 auto;
+}
+
+.hero-catalog-divider__line {
+  flex: 1;
+  height: 1px;
+  background: rgba(var(--color-foreground), 0.1);
+}
+
+.hero-catalog-divider__label {
+  font-family: var(--font-body-family);
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.35);
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------------------
+   5. UTILITY / ANIMATION HELPERS
+   --------------------------------------------------------------------------- */
+
+/* Stagger-in via IntersectionObserver or GSAP — classes toggled by JS */
+.js-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.js-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay helpers (chain with stagger) */
+.js-reveal--delay-1 { transition-delay: 0.1s; }
+.js-reveal--delay-2 { transition-delay: 0.2s; }
+.js-reveal--delay-3 { transition-delay: 0.3s; }
+.js-reveal--delay-4 { transition-delay: 0.4s; }
+
+/* Horizontal reveal variant */
+.js-reveal--left {
+  transform: translateX(-24px);
+}
+
+.js-reveal--left.is-visible {
+  transform: translateX(0);
+}
+
+
+/* ---------------------------------------------------------------------------
+   6. RESPONSIVE — large screens
+   --------------------------------------------------------------------------- */
+
+@media screen and (min-width: 1400px) {
+  .collection-hero__content {
+    padding: 4rem 8vw 6rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .catalog-section {
+    padding: 8rem 0 6rem;
+  }
+}
