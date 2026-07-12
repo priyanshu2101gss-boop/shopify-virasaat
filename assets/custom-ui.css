@@ -576,3 +576,121 @@
     padding: 8rem 0 6rem;
   }
 }
+
+/* =============================================================================
+   HOMEPAGE PREMIUM GRID BACKGROUND
+   Scoped exclusively to: main[data-template="index"]
+
+   HOW TO TUNE:
+   ─────────────────────────────────────────────────────────────────────────────
+   --hp-grid-size          Grid cell size in px. Larger = coarser grid.
+                           Default: 48px. Try 32px–80px.
+
+   --hp-grid-opacity       How visible the grid lines are (0–1).
+                           Default: 0.045. Try 0.02 (subtler) – 0.08 (bolder).
+
+   --hp-grid-color         RGB values of the grid line colour.
+                           Default: 0,0,0 (black on white bg).
+                           For dark backgrounds try 255,255,255.
+
+   --hp-vignette-spread    How far the radial depth gradient reaches.
+                           Default: 80%. Try 60% (tighter) – 100% (wider).
+
+   --hp-vignette-opacity   Opacity of the depth/vignette overlay (0–1).
+                           Default: 0.06. Higher = stronger 3-D illusion.
+
+   3-D DEPTH ILLUSION explained:
+   The grid lines are constant, but a radial gradient overlay (::before)
+   brightens the centre and softly darkens the edges, making the grid
+   appear to recede — like an infinite perspective plane.
+   ============================================================================= */
+
+/* ── Custom properties (tweak here) ── */
+main[data-template="index"] {
+  --hp-grid-size:         48px;
+  --hp-grid-opacity:      0.045;
+  --hp-grid-color:        0, 0, 0;
+  --hp-vignette-spread:   80%;
+  --hp-vignette-opacity:  0.06;
+
+  /* Ensure base is pure white */
+  background-color: #ffffff;
+
+  /* Stacked backgrounds:
+     Layer 1 (top)    — horizontal lines
+     Layer 2          — vertical lines
+     Both share the same grid-size so they align into a perfect grid. */
+  background-image:
+    /* Horizontal lines */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent calc(var(--hp-grid-size) - 1px),
+      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) calc(var(--hp-grid-size) - 1px),
+      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) var(--hp-grid-size)
+    ),
+    /* Vertical lines */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent calc(var(--hp-grid-size) - 1px),
+      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) calc(var(--hp-grid-size) - 1px),
+      rgba(var(--hp-grid-color), var(--hp-grid-opacity)) var(--hp-grid-size)
+    );
+  background-size: var(--hp-grid-size) var(--hp-grid-size);
+  background-attachment: local; /* stays fixed relative to content, not viewport */
+
+  /* Stacking context for the ::before depth overlay */
+  position: relative;
+}
+
+/* ── Depth / vignette overlay (creates the soft 3-D perspective illusion) ── */
+main[data-template="index"]::before {
+  content: "";
+  position: fixed; /* fixed so the gradient stays centred as user scrolls */
+  inset: 0;
+  pointer-events: none;  /* never blocks clicks */
+  z-index: 0;            /* sits below all Shopify sections */
+
+  background: radial-gradient(
+    ellipse var(--hp-vignette-spread) var(--hp-vignette-spread) at 50% 30%,
+    /* bright centre — makes grid feel distant/deep */
+    rgba(255, 255, 255, 0.0) 0%,
+    rgba(255, 255, 255, 0.0) 35%,
+    /* soft dark ring — edges "frame" the depth */
+    rgba(var(--hp-grid-color), var(--hp-vignette-opacity)) 100%
+  );
+}
+
+/* ── Ensure all Shopify sections render above the overlay ── */
+main[data-template="index"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Responsive tweaks ── */
+
+/* Tablet: slightly tighter grid for smaller viewport density */
+@media screen and (max-width: 989px) {
+  main[data-template="index"] {
+    --hp-grid-size:    40px;
+    --hp-grid-opacity: 0.04;
+  }
+}
+
+/* Mobile: coarser grid so lines don't look cluttered on small screens */
+@media screen and (max-width: 749px) {
+  main[data-template="index"] {
+    --hp-grid-size:    32px;
+    --hp-grid-opacity: 0.035;
+    --hp-vignette-opacity: 0.04;
+  }
+}
+
+/* ── Accessibility: respect reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  main[data-template="index"] {
+    background-attachment: scroll;
+  }
+}
+
