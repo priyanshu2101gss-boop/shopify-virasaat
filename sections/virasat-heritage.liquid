@@ -1,0 +1,228 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section
+  class="vt-heritage color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding"
+  id="Heritage-{{ section.id }}"
+>
+  <div class="vt-heritage__grid">
+    {%- comment -%} LEFT — Image {%- endcomment -%}
+    <div class="vt-heritage__media vt-hp-reveal">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1000
+          | image_tag:
+            widths: '400, 600, 800, 1000',
+            sizes: '(min-width: 990px) 45vw, 90vw',
+            loading: 'lazy'
+        }}
+      {%- else -%}
+        {{ 'detailed-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} RIGHT — Content {%- endcomment -%}
+    <div class="vt-heritage__content">
+      <div class="vt-heritage__symbol vt-hp-reveal">✳</div>
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="vt-heritage__heading vt-hp-reveal vt-hp-reveal--d1">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <p class="vt-heritage__text vt-hp-reveal vt-hp-reveal--d2">
+          {{ section.settings.description }}
+        </p>
+      {%- endif -%}
+
+      <div class="vt-heritage__stats vt-hp-reveal vt-hp-reveal--d3">
+        {%- if section.settings.stat_1_number != blank -%}
+          <div class="vt-heritage__stat">
+            <span class="vt-heritage__stat-number" data-vt-counter>
+              {{ section.settings.stat_1_number }}
+            </span>
+            {%- if section.settings.stat_1_label != blank -%}
+              <span class="vt-heritage__stat-label">{{ section.settings.stat_1_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.stat_2_number != blank -%}
+          <div class="vt-heritage__stat">
+            <span class="vt-heritage__stat-number" data-vt-counter>
+              {{ section.settings.stat_2_number }}
+            </span>
+            {%- if section.settings.stat_2_label != blank -%}
+              <span class="vt-heritage__stat-label">{{ section.settings.stat_2_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.stat_3_number != blank -%}
+          <div class="vt-heritage__stat">
+            <span class="vt-heritage__stat-number" data-vt-counter>
+              {{ section.settings.stat_3_number }}
+            </span>
+            {%- if section.settings.stat_3_label != blank -%}
+              <span class="vt-heritage__stat-label">{{ section.settings.stat_3_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.stat_4_number != blank -%}
+          <div class="vt-heritage__stat">
+            <span class="vt-heritage__stat-number" data-vt-counter>
+              {{ section.settings.stat_4_number }}
+            </span>
+            {%- if section.settings.stat_4_label != blank -%}
+              <span class="vt-heritage__stat-label">{{ section.settings.stat_4_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Virasat Heritage",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Heritage image"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "A Legacy Woven in Every Thread"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Virasat celebrates the timeless art of Indian craftsmanship. Each piece is a tribute to the master artisans whose techniques have been passed down through generations, creating garments that tell stories of heritage, royalty, and unmatched artistry."
+    },
+    {
+      "type": "header",
+      "content": "Stat 1"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Number",
+      "default": "200+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Label",
+      "default": "Artisan Partners"
+    },
+    {
+      "type": "header",
+      "content": "Stat 2"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Number",
+      "default": "15+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Label",
+      "default": "Years of Craft"
+    },
+    {
+      "type": "header",
+      "content": "Stat 3"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Number",
+      "default": "50+"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Label",
+      "default": "Collections"
+    },
+    {
+      "type": "header",
+      "content": "Stat 4"
+    },
+    {
+      "type": "text",
+      "id": "stat_4_number",
+      "label": "Number",
+      "default": "10,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_4_label",
+      "label": "Label",
+      "default": "Happy Customers"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-4"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Virasat Heritage"
+    }
+  ]
+}
+{% endschema %}

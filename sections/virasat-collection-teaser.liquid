@@ -1,0 +1,229 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section
+  class="vt-teaser color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding"
+  id="Teaser-{{ section.id }}"
+>
+  <div class="vt-teaser__grid">
+    {%- comment -%} LEFT — Large image with overlapping headline {%- endcomment -%}
+    <div class="vt-teaser__media-left vt-hp-reveal">
+      {%- if section.settings.image_1 != blank -%}
+        {{
+          section.settings.image_1
+          | image_url: width: 900
+          | image_tag:
+            widths: '360, 540, 720, 900',
+            sizes: '(min-width: 990px) 40vw, 90vw',
+            loading: 'lazy'
+        }}
+      {%- else -%}
+        {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <div class="vt-teaser__overlay-heading">
+          <h3>{{ section.settings.heading }}</h3>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} CENTER — Content {%- endcomment -%}
+    <div class="vt-teaser__content vt-hp-reveal vt-hp-reveal--d1">
+      {%- if section.settings.label != blank -%}
+        <p class="vt-teaser__label">{{ section.settings.label }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <p class="vt-teaser__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- comment -%} List items {%- endcomment -%}
+      {%- assign list_items = '' -%}
+      {%- if section.settings.list_item_1 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_1 | append: '||' -%}{%- endif -%}
+      {%- if section.settings.list_item_2 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_2 | append: '||' -%}{%- endif -%}
+      {%- if section.settings.list_item_3 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_3 | append: '||' -%}{%- endif -%}
+      {%- if section.settings.list_item_4 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_4 | append: '||' -%}{%- endif -%}
+      {%- if section.settings.list_item_5 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_5 | append: '||' -%}{%- endif -%}
+      {%- if section.settings.list_item_6 != blank -%}{%- assign list_items = list_items | append: section.settings.list_item_6 | append: '||' -%}{%- endif -%}
+
+      {%- if list_items != '' -%}
+        {%- assign list_array = list_items | split: '||' -%}
+        <ul class="vt-teaser__list">
+          {%- for item in list_array -%}
+            {%- if item != blank -%}
+              <li>{{ item }}</li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <a
+          href="{{ section.settings.button_link }}"
+          class="vt-teaser__btn"
+        >
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} RIGHT — Secondary image (desktop only) {%- endcomment -%}
+    <div class="vt-teaser__media-right vt-hp-reveal vt-hp-reveal--d2">
+      {%- if section.settings.image_2 != blank -%}
+        {{
+          section.settings.image_2
+          | image_url: width: 700
+          | image_tag:
+            widths: '350, 500, 700',
+            sizes: '(min-width: 990px) 25vw, 50vw',
+            loading: 'lazy'
+        }}
+      {%- else -%}
+        {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Virasat Collection Teaser",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Left image (large)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Right image (desktop only)"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Overlay heading",
+      "default": "The Festive Edit"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Coming Soon"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Our upcoming collection draws from the rich tapestry of Indian celebrations — every piece crafted to make you the centerpiece of every occasion."
+    },
+    {
+      "type": "header",
+      "content": "Category list"
+    },
+    {
+      "type": "text",
+      "id": "list_item_1",
+      "label": "Item 1",
+      "default": "Bridal Lehengas"
+    },
+    {
+      "type": "text",
+      "id": "list_item_2",
+      "label": "Item 2",
+      "default": "Festive Sarees"
+    },
+    {
+      "type": "text",
+      "id": "list_item_3",
+      "label": "Item 3",
+      "default": "Indo-Western Fusion"
+    },
+    {
+      "type": "text",
+      "id": "list_item_4",
+      "label": "Item 4",
+      "default": "Handcrafted Kurtas"
+    },
+    {
+      "type": "text",
+      "id": "list_item_5",
+      "label": "Item 5",
+      "default": "Heritage Dupattas"
+    },
+    {
+      "type": "text",
+      "id": "list_item_6",
+      "label": "Item 6",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Virasat Collection Teaser"
+    }
+  ]
+}
+{% endschema %}
