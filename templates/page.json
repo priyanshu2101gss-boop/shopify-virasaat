@@ -72,8 +72,8 @@
       ],
       "name": "t:sections.featured-product.presets.name",
       "settings": {
-        "product": "",
-        "color_scheme": "",
+        "product": "gripzy-hoodi",
+        "color_scheme": "scheme-0c695182-6324-423f-8ffa-ab3757c05522",
         "secondary_background": false,
         "media_size": "medium",
         "constrain_to_viewport": true,
