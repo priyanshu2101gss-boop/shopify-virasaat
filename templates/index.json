@@ -38,7 +38,7 @@
       "settings": {
         "image": "shopify://shop_images/WhatsApp_Image_2026-07-12_at_22.19.30.jpg",
         "image_overlay_opacity": 40,
-        "image_height": "large",
+        "image_height": "medium",
         "image_behavior": "none",
         "desktop_content_position": "bottom-center",
         "desktop_content_alignment": "center",
